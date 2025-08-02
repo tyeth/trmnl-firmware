@@ -15,7 +15,7 @@
 #include <AsyncTCP.h>
 #include <Preferences.h>
 #include <cstdint>
-#include "png.h"
+#include <png_file.h>
 #include <bmp.h>
 #include <Update.h>
 #include <math.h>
@@ -35,12 +35,13 @@
 #include <serialize_log.h>
 #include <preferences_persistence.h>
 #include "logo_small.h"
+#include "loading.h"
 #include <wifi-helpers.h>
 
 bool pref_clear = false;
 String new_filename = "";
 
-uint8_t *buffer = nullptr, *buffer_old = nullptr;
+uint8_t *buffer = nullptr;
 char filename[1024];      // image URL
 char binUrl[1024];        // update URL
 char message_buffer[128]; // message to show on the screen
@@ -238,7 +239,7 @@ void bl_init(void)
     Log.info("%s [%d]: Display TRMNL logo start\r\n", __FILE__, __LINE__);
 
     buffer = (uint8_t *)malloc(DEFAULT_IMAGE_SIZE);
-    display_show_image(storedLogoOrDefault(), DEFAULT_IMAGE_SIZE, nullptr, 0);
+    display_show_image(storedLogoOrDefault(), DEFAULT_IMAGE_SIZE, false);
     free(buffer);
     buffer = nullptr;
 
@@ -659,8 +660,6 @@ static https_request_err_e downloadAndShow()
           // start connection and send HTTP header
           int httpCode = https.GET();
           int content_size = https.getSize();
-          uint8_t *buffer_old = nullptr; // Disable partial update for now
-          int file_size_old = 0;
 
           // httpCode will be negative on error
           if (httpCode < 0)
@@ -733,11 +732,6 @@ static https_request_err_e downloadAndShow()
             filesystem_file_delete("/last.png");
             filesystem_file_rename("/current.png", "/last.png");
             filesystem_file_rename("/current.bmp", "/last.bmp");
-// Disable partial update (for now)
-//            if (filesystem_file_exists("/last.png")) {
-//                buffer_old = display_read_file("/last.png", &file_size_old);
-//                Log.info("%s [%d]: Reading last.png to use for partial update, size = %d\r\n", __FILE__, __LINE__, file_size_old);
-//            }
           }
 
           bool image_reverse = false;
@@ -745,7 +739,7 @@ static https_request_err_e downloadAndShow()
           {
             writeImageToFile("/current.png", buffer, content_size);
             Log.info("%s [%d]: Decoding png\r\n", __FILE__, __LINE__);
-            display_show_image(buffer, content_size, buffer_old, file_size_old);
+            display_show_image(buffer, content_size, true);
 //            delay(100);
 //            free(buffer);
 //            buffer = nullptr;
@@ -820,7 +814,7 @@ static https_request_err_e downloadAndShow()
               writeImageToFile("/current.bmp", buffer, content_size);
             }
             Log.info("Free heap at before display - %d", ESP.getMaxAllocHeap());
-            display_show_image(buffer, content_size, nullptr, 0);
+            display_show_image(buffer, content_size, true);
 
             // Using filename from API response
             new_filename = apiDisplayResult.response.filename;
@@ -913,7 +907,7 @@ uint32_t downloadStream(WiFiClient *stream, int content_size, uint8_t *buffer)
 https_request_err_e handleApiDisplayResponse(ApiDisplayResponse &apiResponse)
 {
   https_request_err_e result = HTTPS_NO_ERR;
-  int file_size = 0, file_size_old = 0;
+  int file_size = 0;
 
   if (special_function == SF_NONE)
   {
@@ -1275,7 +1269,7 @@ https_request_err_e handleApiDisplayResponse(ApiDisplayResponse &apiResponse)
             case PNG_NO_ERR:
             {
               Log.info("Showing image\n\r");
-              display_show_image(buffer, file_size, nullptr, 0);
+              display_show_image(buffer, file_size, true);
               need_to_refresh_display = 1;
             }
             break;
@@ -1289,7 +1283,7 @@ https_request_err_e handleApiDisplayResponse(ApiDisplayResponse &apiResponse)
             case BMP_NO_ERR:
             {
               Log.info("Showing image\n\r");
-              display_show_image(buffer, DISPLAY_BMP_IMAGE_SIZE, nullptr, 0);
+              display_show_image(buffer, DISPLAY_BMP_IMAGE_SIZE, true);
               need_to_refresh_display = 1;
             }
             break;
@@ -1360,11 +1354,6 @@ https_request_err_e handleApiDisplayResponse(ApiDisplayResponse &apiResponse)
             Log.info("%s [%d]: send_to_me PNG\r\n", __FILE__, __LINE__);
             image_err_e png_parse_result = PNG_NO_ERR; // DEBUG
             buffer = display_read_file("/current.png", &file_size);
-// Disable partial update for now
-//            if (filesystem_file_exists("/last.png")) {
-//                buffer_old = display_read_file("/last.png", &file_size_old);
-//                Log.info("%s [%d]: loading last PNG for partial update\r\n", __FILE__, __LINE__);
-//            }
             if (png_parse_result != PNG_NO_ERR)
             {
               Log_error_submit("Error parsing PNG header, code: %d", png_parse_result);
@@ -1375,8 +1364,7 @@ https_request_err_e handleApiDisplayResponse(ApiDisplayResponse &apiResponse)
           }
 
           Log.info("Showing image\n\r");
-//          display_show_image(buffer, image_reverse, file_size);
-          display_show_image(buffer, file_size, buffer_old, file_size_old);
+          display_show_image(buffer, file_size, true);
           need_to_refresh_display = 1;
 
           free(buffer);
@@ -1908,11 +1896,6 @@ static float readBatteryVoltage(void)
     int32_t adc;
     int32_t sensorValue;
 
-    analogReadResolution(8);
-    analogReadMilliVolts(PIN_BATTERY); // throw away first reading
-    // There is something strange happening on some PCBs where the ADC needs a lot of reads
-    // averaged together to give a good reading. On others, it doesn't take very many
-    // We shall try with 8 reads and if the voltage seems super low, we'll try again with 128
     adc = 0;
     for (uint8_t i = 0; i < 8; i++) {
       analogReadResolution(8);
@@ -2113,7 +2096,8 @@ static uint8_t *storedLogoOrDefault(void)
   {
     return buffer;
   }
-  return const_cast<uint8_t *>(logo_small);
+//  return const_cast<uint8_t *>(logo_small);
+  return const_cast<uint8_t *>(loading);
 }
 
 static bool saveCurrentFileName(String &name)
@@ -2204,7 +2188,7 @@ DeviceStatusStamp getDeviceStatusStamp()
   deviceStatus.time_since_last_sleep = time_since_sleep;
   snprintf(deviceStatus.current_fw_version, sizeof(deviceStatus.current_fw_version), "%s", FW_VERSION_STRING);
   parseSpecialFunctionToStr(deviceStatus.special_function, sizeof(deviceStatus.special_function), special_function);
-  deviceStatus.battery_voltage = vBatt; //readBatteryVoltage()
+  deviceStatus.battery_voltage = vBatt; //readBatteryVoltage();
   parseWakeupReasonToStr(deviceStatus.wakeup_reason, sizeof(deviceStatus.wakeup_reason), esp_sleep_get_wakeup_cause());
   deviceStatus.free_heap_size = ESP.getFreeHeap();
   deviceStatus.max_alloc_size = ESP.getMaxAllocHeap();

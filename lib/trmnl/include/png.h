@@ -1,5 +1,7 @@
 #pragma once
 
+#include <PNGdec.h>
+
 enum image_err_e
 {
   PNG_BAD_SIZE,
@@ -10,3 +12,4 @@ enum image_err_e
   PNG_FS_ERROR,
   PNG_FILE_NOT_FOUND
 };
+

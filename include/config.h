@@ -66,15 +66,15 @@ enum WIFI_CONNECT_RETRY_TIME // Time to sleep before trying to connect to the Wi
 #elif defined(BOARD_WAVESHARE_ESP32_DRIVER)
 #define PIN_INTERRUPT 33
 #define DEVICE_MODEL "waveshare"
-#define FAKE_BATTERY_VOLTAGE
+//#define FAKE_BATTERY_VOLTAGE
 #elif defined(BOARD_SEEED_XIAO_ESP32C3)
 #define DEVICE_MODEL "seeed_esp32c3"
 #define PIN_INTERRUPT 9
-#define FAKE_BATTERY_VOLTAGE
+//#define FAKE_BATTERY_VOLTAGE
 #elif defined(BOARD_SEEED_XIAO_ESP32S3)
 #define DEVICE_MODEL "seeed_esp32s3"
 #define PIN_INTERRUPT 0
-#define FAKE_BATTERY_VOLTAGE
+//#define FAKE_BATTERY_VOLTAGE
 #elif defined(BOARD_XIAO_EPAPER_DISPLAY)
 #define DEVICE_MODEL "xiao_epaper_display"
 #define PIN_INTERRUPT 5     //with silkscreen "KEY3"
@@ -87,10 +87,10 @@ enum WIFI_CONNECT_RETRY_TIME // Time to sleep before trying to connect to the Wi
 #define PIN_BATTERY 3
 #endif
 
-// #define FAKE_BATTERY_VOLTAGE // Uncomment to report 4.2V instead of reading ADC
+//#define FAKE_BATTERY_VOLTAGE // Uncomment to report 4.2V instead of reading ADC
 
 #define BUTTON_HOLD_TIME 5000
-
+#define BUTTON_MEDIUM_HOLD_TIME 1000
 #define BUTTON_SOFT_RESET_TIME 15000
 
 #define SERVER_MAX_RETRIES 3
