@@ -93,6 +93,15 @@
    #define EPD_RST_PIN  1
    #define EPD_DC_PIN   4
    #define EPD_BUSY_PIN 3
+
+#elif defined(ARDUINO_MAGTAG29_ESP32S2)
+   // Pin definition for Adafruit MagTag
+   #define EPD_SCK_PIN  SCK
+   #define EPD_MOSI_PIN MOSI
+   #define EPD_CS_PIN   EPD_CS
+   #define EPD_RST_PIN  EPD_RESET
+   #define EPD_DC_PIN   EPD_DC
+   #define EPD_BUSY_PIN EPD_BUSY
 #else
    #error "Board type not defined. Please define BOARD_WAVESHARE_ESP32_DRIVER or BOARD_TRMNL or BOARD_SEEED_XIAO_ESP32C3 or BOARD_SEEED_XIAO_ESP32S3 in platformio.ini build_flags."
 #endif

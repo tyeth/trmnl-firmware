@@ -8,10 +8,18 @@
 #define BB_EPAPER
 #ifdef BB_EPAPER
 #include "bb_epaper.h"
+#if defined(ARDUINO_MAGTAG29_ESP32S2)
+#define ONE_BIT_PANEL EP293_128x296
+#define TWO_BIT_PANEL EP293_128x296
+// EP293_128x296, ** rotated 90 degrees
+// EP294_128x296, // Waveshare newer 2.9" 1-bit 128x296 *** Rotated 90 magtag
+// EP295_128x296, // harvested from Solum 2.9" BW ESLs *** Rotated 90 magtag
+#else
 //#define ONE_BIT_PANEL EP426_800x480
 //#define TWO_BIT_PANEL EP426_800x480_4GRAY
 #define ONE_BIT_PANEL EP75_800x480
 #define TWO_BIT_PANEL EP75_800x480_4GRAY_OLD
+#endif
 BBEPAPER bbep(ONE_BIT_PANEL);
 // Counts the number of partial updates to know when to do a full update
 RTC_DATA_ATTR int iUpdateCount = 0;
