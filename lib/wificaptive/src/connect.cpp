@@ -5,6 +5,8 @@
 #include "wifi-helpers.h"
 #include "esp_event.h"
 #include "esp_wifi.h"
+#include "WiFiGeneric.h"
+#include "WiFi.h"
 
 void captureEventData(WiFiEvent_t event, WiFiEventInfo_t info, WifiEventData *eventData)
 {
