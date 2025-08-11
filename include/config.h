@@ -79,15 +79,17 @@ enum WIFI_CONNECT_RETRY_TIME // Time to sleep before trying to connect to the Wi
 #define DEVICE_MODEL "xiao_epaper_display"
 #define PIN_INTERRUPT 5     //with silkscreen "KEY3"
 #define PIN_RESET 0
-#elif defined(ARDUINO_MAGTAG29_ESP32S2)
-#define DEVICE_MODEL "magtag29"
-#define PIN_INTERRUPT BUTTON_A
+#elif defined(BOARD_ADAFRUIT_MAGTAG_2025)
+#define DEVICE_MODEL "adafruit_magtag29_2025"
+#define PIN_INTERRUPT 0
+#define PIN_RESET 38
+#define PIN_INTERRUPT_LOGIC_LEVEL LOW
 #endif
 
 #if defined(BOARD_XIAO_EPAPER_DISPLAY)
 #define PIN_BATTERY 1
 #elif defined(ARDUINO_MAGTAG29_ESP32S2)
-#define PIN_BATTERY BATT_MONITOR
+#define PIN_BATTERY 4
 #else
 #define PIN_BATTERY 3
 #endif
@@ -100,6 +102,6 @@ enum WIFI_CONNECT_RETRY_TIME // Time to sleep before trying to connect to the Wi
 
 #define SERVER_MAX_RETRIES 3
 
-#define API_BASE_URL "https://trmnl.app"
+#define API_BASE_URL "http://192.168.1.63:2300"
 
 #endif

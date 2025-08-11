@@ -113,14 +113,20 @@ void bl_init(void)
   pins_init();
   vBatt = readBatteryVoltage(); // Read the battery voltage BEFORE WiFi is turned on
 
-#if defined(BOARD_SEEED_XIAO_ESP32C3) || defined(BOARD_SEEED_XIAO_ESP32S3) || defined(ARDUINO_MAGTAG29_ESP32S2)
+#ifndef PIN_INTERRUPT_LOGIC_LEVEL
+#define PIN_INTERRUPT_LOGIC_LEVEL LOW
+#endif
+#if defined(BOARD_SEEED_XIAO_ESP32C3) || defined(BOARD_SEEED_XIAO_ESP32S3) || defined(BOARD_ADAFRUIT_MAGTAG_2025)
   delay(3000);
 
-  if (digitalRead(PIN_INTERRUPT) == LOW) {
+  if (digitalRead(PIN_INTERRUPT) == PIN_INTERRUPT_LOGIC_LEVEL) {
     Log_info("Boot button pressed during startup, resetting WiFi credentials...");
     WifiCaptivePortal.resetSettings();
     Log_info("WiFi credentials reset completed");
   }
+  #if CORE_LOG_LEVEL >= LOG_LEVEL_DEBUG
+  Log_info("Interrupt button (pin %d) state: %d", PIN_INTERRUPT, digitalRead(PIN_INTERRUPT));
+  #endif
 #endif
 
   wakeup_reason = esp_sleep_get_wakeup_cause();
@@ -1850,7 +1856,7 @@ static void goToSleep(void)
 #elif CONFIG_IDF_TARGET_ESP32C3
   esp_deep_sleep_enable_gpio_wakeup(1 << PIN_INTERRUPT, ESP_GPIO_WAKEUP_GPIO_LOW);
 #elif CONFIG_IDF_TARGET_ESP32S2
-  esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_INTERRUPT, 0);
+  esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_INTERRUPT, PIN_INTERRUPT_LOGIC_LEVEL);
 #elif CONFIG_IDF_TARGET_ESP32S3
   esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_INTERRUPT, 0);
 #else

@@ -94,14 +94,14 @@
    #define EPD_DC_PIN   4
    #define EPD_BUSY_PIN 3
 
-#elif defined(ARDUINO_MAGTAG29_ESP32S2)
+#elif defined(BOARD_ADAFRUIT_MAGTAG_2025)
    // Pin definition for Adafruit MagTag
-   #define EPD_SCK_PIN  SCK
-   #define EPD_MOSI_PIN MOSI
-   #define EPD_CS_PIN   EPD_CS
-   #define EPD_RST_PIN  EPD_RESET
-   #define EPD_DC_PIN   EPD_DC
-   #define EPD_BUSY_PIN EPD_BUSY
+   #define EPD_SCK_PIN  36 //SCK
+   #define EPD_MOSI_PIN 35 //MOSI
+   #define EPD_CS_PIN   8  //EPD_CS
+   #define EPD_RST_PIN  6  //EPD_RESET
+   #define EPD_DC_PIN   7  //EPD_DC
+   #define EPD_BUSY_PIN 5  //EPD_BUSY
    //TODO: Check register for screen variation between OG and 2025 MAGTAG.
 #else
    #error "Board type not defined. Please define BOARD_WAVESHARE_ESP32_DRIVER or BOARD_TRMNL or BOARD_SEEED_XIAO_ESP32C3 or BOARD_SEEED_XIAO_ESP32S3 in platformio.ini build_flags."
