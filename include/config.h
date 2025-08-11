@@ -65,6 +65,7 @@ enum WIFI_CONNECT_RETRY_TIME // Time to sleep before trying to connect to the Wi
 #define DEVICE_MODEL "og"
 #elif defined(BOARD_WAVESHARE_ESP32_DRIVER)
 #define PIN_INTERRUPT 33
+#define PIN_INTERRUPT_LOGIC_LEVEL HIGH
 #define DEVICE_MODEL "waveshare"
 #define FAKE_BATTERY_VOLTAGE
 #elif defined(BOARD_SEEED_XIAO_ESP32C3)
@@ -81,10 +82,15 @@ enum WIFI_CONNECT_RETRY_TIME // Time to sleep before trying to connect to the Wi
 #define PIN_RESET 0
 #elif defined(BOARD_ADAFRUIT_MAGTAG_2025)
 #define DEVICE_MODEL "adafruit_magtag29_2025"
-#define PIN_INTERRUPT 0
+#define PIN_INTERRUPT 15 //0?, BUTTON_A 15
 #define PIN_RESET 38
+// #define PIN_INTERRUPT_LOGIC_LEVEL HIGH
+#endif
+
+#ifndef PIN_INTERRUPT_LOGIC_LEVEL
 #define PIN_INTERRUPT_LOGIC_LEVEL LOW
 #endif
+
 
 #if defined(BOARD_XIAO_EPAPER_DISPLAY)
 #define PIN_BATTERY 1

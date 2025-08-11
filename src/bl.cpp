@@ -113,9 +113,6 @@ void bl_init(void)
   pins_init();
   vBatt = readBatteryVoltage(); // Read the battery voltage BEFORE WiFi is turned on
 
-#ifndef PIN_INTERRUPT_LOGIC_LEVEL
-#define PIN_INTERRUPT_LOGIC_LEVEL LOW
-#endif
 #if defined(BOARD_SEEED_XIAO_ESP32C3) || defined(BOARD_SEEED_XIAO_ESP32S3) || defined(BOARD_ADAFRUIT_MAGTAG_2025)
   delay(3000);
 
