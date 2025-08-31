@@ -1855,7 +1855,7 @@ static void goToSleep(void)
 #elif CONFIG_IDF_TARGET_ESP32S2
   esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_INTERRUPT, PIN_INTERRUPT_LOGIC_LEVEL);
 #elif CONFIG_IDF_TARGET_ESP32S3
-  esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_INTERRUPT, 0);
+  esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_INTERRUPT, PIN_INTERRUPT_LOGIC_LEVEL);
 #else
 #error "Unsupported ESP32 target for GPIO wakeup configuration"
 #endif

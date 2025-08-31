@@ -104,7 +104,7 @@
    #define EPD_BUSY_PIN 5  //EPD_BUSY
    //TODO: Check register for screen variation between OG and 2025 MAGTAG.
 #else
-   #error "Board type not defined. Please define BOARD_WAVESHARE_ESP32_DRIVER or BOARD_TRMNL or BOARD_SEEED_XIAO_ESP32C3 or BOARD_SEEED_XIAO_ESP32S3 in platformio.ini build_flags."
+   #error "Board type not defined. Please define BOARD_WAVESHARE_ESP32_DRIVER or BOARD_TRMNL or BOARD_SEEED_XIAO_ESP32C3 or BOARD_SEEED_XIAO_ESP32S3 or BOARD_ADAFRUIT_MAGTAG_2025 in platformio.ini build_flags."
 #endif
 
 #define GPIO_PIN_SET   1
